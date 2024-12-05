@@ -13,5 +13,14 @@ print(w)
 
 # lfilter used to compute difference equations
 y = lfilter([1], a, w)
+t = np.arange(len(y))
+
 print("w (input): ", w[:5])
 print("y (output): ", y[:5])
+
+plt.plot(t, y, label="Generated realization (y)", color="red")
+plt.xlabel("Time (samples)")
+plt.ylabel("Realizations")
+plt.grid(True)
+plt.legend()
+plt.show()
