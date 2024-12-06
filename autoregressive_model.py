@@ -18,9 +18,72 @@ t = np.arange(len(y))
 print("w (input): ", w[:5])
 print("y (output): ", y[:5])
 
-plt.plot(t, y, label="Generated realization (y)", color="red")
+plt.figure(figsize=(12, 6))
+
+plt.subplot(2, 1, 1)
+plt.plot(t, w, label="White Gaussian Noise (w)", color="orange")
+plt.title("Input: White Gaussian Noise (w)")
 plt.xlabel("Time (samples)")
-plt.ylabel("Realizations")
+plt.ylabel("Amplitude")
 plt.grid(True)
 plt.legend()
+
+plt.subplot(2, 1, 2)
+plt.plot(t, y, label="Generated realization (y)", color="blue")
+plt.title("Output: Generated Realization from AR(3)")
+plt.xlabel("Time (samples)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
 plt.show()
+
+# autocorrelation function calculation on both w and y.
+var_w = np.var(w)
+var_y = np.var(y)
+
+acorr_w = np.correlate(w, w, mode="full")
+acorr_y = np.correlate(y, y, mode="full")
+
+# normalize the autocorrelation result using each signal's variance.
+acorr_w_norm = acorr_w / var_w
+acorr_y_norm = acorr_y / var_y
+
+# shift values for the autocorrelation function
+tau = np.arange(-len(w) + 1, len(w))
+
+plt.subplot(2, 1, 1)
+plt.plot(tau, acorr_w_norm, label="Autocorrelation function (w)", color="pink")
+plt.title("Autocorrelation of signal w")
+plt.xlabel("Shift (tau)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.legend()
+
+plt.subplot(2, 1, 2)
+plt.plot(t, y, label="Autocorrelation function (y)", color="red")
+plt.title("Autocorrelation of signal y")
+plt.xlabel("Shift (tau)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+# Build the optimal 1-step predictor of yk
+# iterate every value of y to predict the current step value
+# \hat{y_k} = a1*y_k-1 + a2*y_k-2 + a3*y_k-3 (P = 3)
+ye = np.zeros(len(y))
+e = np.zeros(len(y))
+
+# prediction starts from P (3)
+for k in range(3, len(y)):
+    y_hat_k = a[0] * y[k-1] + a[1] * y[k-2] + a[2] * y[k-3]
+
+    # Compute prediction error
+    e_k = y[k] - y_hat_k
+
+    ye[k] = y_hat_k
+    e[k] = e_k
