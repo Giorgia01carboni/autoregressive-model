@@ -87,3 +87,12 @@ for k in range(3, len(y)):
 
     ye[k] = y_hat_k
     e[k] = e_k
+# Plot original signal and the optimal 1-step predictor in the same plot
+plt.figure(figsize=(10, 6))
+plt.plot(t, y, label="Original signal (y)", color="green", alpha=0.7)
+plt.plot(t, ye, label="Optimal 1-step predictor (y_hat)", color="red", linestyle="--", alpha=0.7)
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
