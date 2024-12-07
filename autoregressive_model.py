@@ -109,3 +109,7 @@ plt.grid(True)
 plt.legend()
 
 plt.show()
+
+# Periodogram of y
+T = 1
+s = T*(np.abs(np.fft(y - np.mean(y)))^2)/N
