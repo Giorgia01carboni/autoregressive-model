@@ -96,3 +96,16 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
+
+# Plot the autocovariance function of the prediction error
+mean_e = np.mean(e)
+autocov_e = [np.mean((e[:N-h] - mean_e) * (e[h:] - mean_e)) for h in range(N)]
+
+plt.plot(np.arange(len(autocov_e)), autocov_e, label="Autocovariance of prediction error (e)", color="red")
+plt.title("Autocovariance of prediction error")
+plt.xlabel("Lag (h)")
+plt.ylabel("Autocovariance")
+plt.grid(True)
+plt.legend()
+
+plt.show()
