@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import lfilter
+from scipy.signal import lfilter, freqz
+
 N = 100
 w = np.random.randn(N)
 # coefficients of the autoregressive part
 a = [1.0, 0.5, -0.5, -0.3]
-print(w)
+
 # y_k -> realizations.
 # Find every value of y_k using previous values y_k-1 and
 # gaussian white noise w_k
@@ -14,9 +15,6 @@ print(w)
 # lfilter used to compute difference equations
 y = lfilter([1], a, w)
 t = np.arange(len(y))
-
-print("w (input): ", w[:5])
-print("y (output): ", y[:5])
 
 plt.figure(figsize=(12, 6))
 
@@ -111,5 +109,36 @@ plt.legend()
 plt.show()
 
 # Periodogram of y
-T = 1
-s = T*(np.abs(np.fft(y - np.mean(y)))^2)/N
+fs = 1
+T = 1/fs
+
+s = T*(np.abs(np.fft.fft(y - np.mean(y)))**2)/N
+
+# Theoretic Power Spectral Density (PSD) of White Gaussian Noise (WGS)
+sw = np.var(w) / (fs / N)
+
+# Parametric PSD
+# h -> transfer function of AR
+freq_w, h = freqz([1], a, whole=True, fs=fs)
+sp = (h * np.conj(h) * sw) / N
+
+
+# Rescaling
+s_norm = s / np.max(s)
+sp_norm = sp / np.max(sp)
+
+freq_axis = np.linspace(0, fs, num=len(sp_norm))
+
+plt.plot(freq_axis, s_norm, label="Periodogram", color="blue", linestyle="--", alpha=0.7)
+plt.plot(freq_axis, sp_norm, label="Parametric PSD", color="orange", alpha=0.7)
+plt.title("Periodogram vs Parametric PSD")
+plt.xlabel("Freq (fs)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.legend()
+
+plt.show()
+
+# Print the lengths of freq_axis and sp_norm
+print("Length of freq_axis:", len(freq_axis))
+print("Length of sp_norm:", len(sp_norm))
