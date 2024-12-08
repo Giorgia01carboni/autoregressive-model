@@ -120,8 +120,7 @@ sw = np.var(w) / (fs / N)
 # Parametric PSD
 # h -> transfer function of AR
 freq_w, h = freqz([1], a, worN=N, whole=True, fs=fs)
-print(len(freq_w))
-print(len(h))
+
 sp = (h * np.conj(h) * sw) / N
 
 
